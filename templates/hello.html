@@ -1,0 +1,12 @@
+<!doctype html>
+<title>Upload new File</title>
+<h1>Upload new File</h1>
+<form action='/upload' method="POST" enctype="multipart/form-data">
+    {% if error %}
+        <h3>Erreur, veuillez sélectionner un fichier valide</h3>
+    {% endif %}
+    <p><input type='file' name='file'>
+    <input type='submit' value='upload'>
+    </p>
+
+</form>
