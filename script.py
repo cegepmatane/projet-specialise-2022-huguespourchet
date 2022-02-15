@@ -7,6 +7,7 @@ req = requests.post('http://127.0.0.1:5000/upload_API/', files=files, data=value
 print(req.text, req.status_code)
 
 req2 = requests.get('http://127.0.0.1:5000/download/upload.txt', allow_redirects=True)
+print('download: ')
 print(req2)
 fichier = open('../../Téléchargements/upload.txt', "w")
 fichier.write(req2.text)
