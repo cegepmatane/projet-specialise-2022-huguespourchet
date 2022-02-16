@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
-import os
+import os, time
+from multiprocessing import Process
 
 #création d'une application Flask
 app = Flask(__name__)
@@ -52,6 +53,12 @@ def upload_file_api():
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         resp = jsonify({'message': 'File successfully uploaded'})
         resp.status_code = 201
+
+        # #création tache multiprocess pour supprimer les fichiers après 2 minutes sur le serveur, sans altérer les requètes du serveur
+        # proc = Process(target=supprimer_folder, args=(filename))
+        # proc.start()
+        # proc.join()
+
         return resp
     else:
         resp = jsonify({'message': 'Allowed file types are txt, pdf, png, jpg, jpeg, gif'})
@@ -62,6 +69,11 @@ def upload_file_api():
 def download_file(name):
     return send_from_directory(app.config["UPLOAD_FOLDER"], name, as_attachment=True)
 
+
+def supprimer_folder(name):
+    time.sleep(2000)
+    os.remove("uploads/", name)
+    print(name, " has been removed successfully")
 
 if __name__ == '__main__':
     app.run(port=5000)
