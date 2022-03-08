@@ -61,7 +61,7 @@ def upload_file_api():
 
         return resp
     else:
-        resp = jsonify({'message': 'Allowed file types are txt, pdf, png, jpg, jpeg, gif'})
+        resp = jsonify({'message': 'Allowed file types are txt, pdf, png, jpg, jpeg, gif, mp4'})
         resp.status_code = 400
         return resp
 #route download, fonctionne par page web et API
