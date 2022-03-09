@@ -1,0 +1,59 @@
+<FirstScreen>:
+    name: 'Menu'
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Parachutage'
+            font_size: 30
+        BoxLayout:
+            Button:
+                text: 'UPLOAD'
+                font_size: 30
+                bold: True
+                background_color: "#e67507"
+                on_release:
+                    app.root.upload()
+                    app.root.current = 'Upload'
+            Button:
+                text: 'DOWNLOAD'
+                font_size: 30
+                bold: True
+                background_color: "#3e45ff"
+                on_release: app.root.download()
+
+<UploadScreen>:
+    name: 'Upload'
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Upload'
+            font_size: 30
+        BoxLayout:
+            orientation: 'horizontal'
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    text: "Fichiers déjà transmis: "
+                    font_size: 20
+            Button:
+                text: 'Load'
+                on_release: root.show_load()
+
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Load"
+                on_release: root.load(filechooser.path, filechooser.selection)

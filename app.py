@@ -69,6 +69,12 @@ def upload_file_api():
 def download_file(name):
     return send_from_directory(app.config["UPLOAD_FOLDER"], name, as_attachment=True)
 
+@app.route('/files_list/<dossier>')
+def list_files(dossier):
+    dir = dossier.replace("!", "/")
+    files = [ f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir,f)) ]
+    resp = ','.join(files)
+    return resp
 
 def supprimer_folder(name):
     time.sleep(2000)
