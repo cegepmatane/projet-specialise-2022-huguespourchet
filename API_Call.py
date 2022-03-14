@@ -22,3 +22,12 @@ def upload(path, filename):
     req = requests.post('http://127.0.0.1:5000/upload_API/', files=files, data=values)
     return req
 
+def download(filename):
+    req = requests.get('http://127.0.0.1:5000/download/'+filename, allow_redirects=True)
+    print('download: ')
+
+    url = '../../Téléchargements/' + filename
+    fichier = open(url, "w")
+    fichier.write(req.text)
+    fichier.close()
+    return req

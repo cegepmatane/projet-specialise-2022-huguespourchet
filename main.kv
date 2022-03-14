@@ -3,8 +3,10 @@ WindowManager:
     Accueil:
     UploadScreen:
     LoadDialog:
+    DownloadScreen:
 
 <Accueil>:
+    name: 'accueil'
     BoxLayout:
         orientation: 'vertical'
         Label:
@@ -24,7 +26,9 @@ WindowManager:
                 font_size: 30
                 bold: True
                 background_color: "#3e45ff"
-                on_release: app.change_fenetre(nom_fenetre="load_dialog")
+                on_release:
+                    app.root.current = "download"
+                    root.manager.transition.direction = "up"
 
 <UploadScreen>:
     name: "upload"
@@ -35,11 +39,11 @@ WindowManager:
             font_size: 30
         BoxLayout:
             orientation: 'horizontal'
-            BoxLayout:
-                orientation: 'vertical'
-                Label:
-                    text: "Fichiers déjà transmis: "
-                    font_size: 20
+            Button:
+                text: 'Retour'
+                on_release:
+                    app.root.current = "accueil"
+                    root.manager.transition.direction = "right"
             Button:
                 text: 'Load'
                 on_release: root.show_load()
@@ -63,3 +67,24 @@ WindowManager:
             Button:
                 text: "Load"
                 on_release: root.load(filechooser.path, filechooser.selection)
+
+<DownloadScreen>:
+    name: 'download'
+
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Download'
+            font_size: 30
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                text: 'Retour'
+                on_release:
+                    app.root.current = "accueil"
+                    root.manager.transition.direction = "down"
+            Button:
+                text: 'Télécharger'
+                on_release:
+                    root.save()
+

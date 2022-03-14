@@ -1,6 +1,7 @@
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
+from kivy.uix.button import Button
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen, ScreenManager
 import API_Call
@@ -34,11 +35,17 @@ class UploadScreen(Screen):
 class WindowManager(ScreenManager):
     pass
 
+class DownloadScreen(Screen):
+    def save(self):
+        res = API_Call.download('upload.txt')
+        print(res)
+
 class LoadDialog(Screen):
     load = ObjectProperty(None)
     cancel = ObjectProperty(None)
 
 kv = Builder.load_file("main.kv")
+
 
 class MyMainApp(App):
     def build(self):
