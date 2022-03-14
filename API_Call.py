@@ -14,3 +14,11 @@ def liste_fichiers():
     req = requests.get(url, allow_redirects=True)
 
     return req.text.split(',')
+
+def upload(path, filename):
+    files = {'file': open(path, 'rb')}
+    values = {'upload_file': filename, 'DB': 'photcat', 'OUT': 'csv', 'SHORT': 'short'}
+
+    req = requests.post('http://127.0.0.1:5000/upload_API/', files=files, data=values)
+    return req
+

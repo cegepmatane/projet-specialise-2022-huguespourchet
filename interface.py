@@ -1,148 +1,50 @@
 from kivy.app import App
-from kivy.base import runTouchApp
 from kivy.lang import Builder
-from kivy.properties import ListProperty
-from kivy.uix.boxlayout import BoxLayout
+from kivy.properties import ObjectProperty
+from kivy.uix.popup import Popup
+from kivy.uix.screenmanager import Screen, ScreenManager
 import API_Call
 
-from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
+import os
 
 
-
-class FirstScreen(Screen):
+class Accueil(Screen):
     pass
 
 class UploadScreen(Screen):
+    loadfile = ObjectProperty(None)
+    file = ""
+
+    def dismiss_popup(self):
+        self._popup.dismiss()
+
+    def show_load(self):
+        content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Sélectionner un fichier", content=content,
+                            size_hint=(0.9, 0.9))
+        self._popup.open()
+
+    def load(self, path, filename):
+        self.file = os.path.join(path, filename[0])
+        print(self.file)
+        self.dismiss_popup()
+        res = API_Call.upload(self.file, filename)
+        print(res.text, res.status_code)
+
+class WindowManager(ScreenManager):
     pass
 
 class LoadDialog(Screen):
-    pass
+    load = ObjectProperty(None)
+    cancel = ObjectProperty(None)
 
-class SaveDialog(Screen):
-    pass
+kv = Builder.load_file("main.kv")
 
-
-class MyScreenManager(ScreenManager):
-    def upload(self):
-        files = API_Call.liste_fichiers()
-
-root_widget = Builder.load_string('''
-#:import FadeTransition kivy.uix.screenmanager.FadeTransition
-MyScreenManager:
-    transition: FadeTransition()
-    FirstScreen:
-    UploadScreen:
-    LoadDialog:
-    SaveDialog:
-<FirstScreen>:
-    name: 'Menu'
-    BoxLayout:
-        orientation: 'vertical'
-        Label:
-            text: 'Parachutage'
-            font_size: 30
-        BoxLayout:
-            Button:
-                text: 'UPLOAD'
-                font_size: 30
-                bold: True
-                background_color: "#e67507"
-                on_release: 
-                    app.root.upload()
-                    app.root.current = 'Upload'
-            Button:
-                text: 'DOWNLOAD'
-                font_size: 30
-                bold: True
-                background_color: "#3e45ff"
-                on_release: app.root.download()
-
-<UploadScreen>:
-    name: 'Upload'
-    BoxLayout:
-        orientation: 'vertical'
-        Label:
-            text: 'Upload'
-            font_size: 30
-        BoxLayout:
-            orientation: 'horizontal'
-            BoxLayout:
-                orientation: 'vertical'
-                Label:
-                    text: "Fichiers déjà transmis: "
-                    font_size: 20
-            BoxLayout:
-                orientation: 'vertical'
-                Button:
-                    text: 'Load'
-                    on_release: root.show_load()
-            Button:
-                text: 'Save'
-                on_release: root.show_save()
-
-        BoxLayout:
-            TextInput:
-                id: text_input
-                text: ''
-
-            RstDocument:
-                text: text_input.text
-                show_errors: True
-
-<LoadDialog>:
-    BoxLayout:
-        size: root.size
-        pos: root.pos
-        orientation: "vertical"
-        FileChooserListView:
-            id: filechooser
-
-        BoxLayout:
-            size_hint_y: None
-            height: 30
-            Button:
-                text: "Cancel"
-                on_release: root.cancel()
-
-            Button:
-                text: "Load"
-                on_release: root.load(filechooser.path, filechooser.selection)
-
-<SaveDialog>:
-    text_input: text_input
-    BoxLayout:
-        size: root.size
-        pos: root.pos
-        orientation: "vertical"
-        FileChooserListView:
-            id: filechooser
-            on_selection: text_input.text = self.selection and self.selection[0] or ''
-
-        TextInput:
-            id: text_input
-            size_hint_y: None
-            height: 30
-            multiline: False
-
-        BoxLayout:
-            size_hint_y: None
-            height: 30
-            Button:
-                text: "Cancel"
-                on_release: root.cancel()
-
-            Button:
-                text: "Save"
-                on_release: root.save(filechooser.path, text_input.text)
-
-                
-            
-''')
-
-
-class ScreenManagerApp(App):
+class MyMainApp(App):
     def build(self):
-        return root_widget
+        return kv
 
 
-ScreenManagerApp().run()
+if __name__ == "__main__":
+    MyMainApp().run()
+

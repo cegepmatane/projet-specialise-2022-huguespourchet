@@ -1,5 +1,10 @@
-<FirstScreen>:
-    name: 'Menu'
+#:import Label kivy.uix.label.Label
+WindowManager:
+    Accueil:
+    UploadScreen:
+    LoadDialog:
+
+<Accueil>:
     BoxLayout:
         orientation: 'vertical'
         Label:
@@ -12,17 +17,17 @@
                 bold: True
                 background_color: "#e67507"
                 on_release:
-                    app.root.upload()
-                    app.root.current = 'Upload'
+                    app.root.current = "upload"
+                    root.manager.transition.direction = "left"
             Button:
                 text: 'DOWNLOAD'
                 font_size: 30
                 bold: True
                 background_color: "#3e45ff"
-                on_release: app.root.download()
+                on_release: app.change_fenetre(nom_fenetre="load_dialog")
 
 <UploadScreen>:
-    name: 'Upload'
+    name: "upload"
     BoxLayout:
         orientation: 'vertical'
         Label:
@@ -46,6 +51,7 @@
         orientation: "vertical"
         FileChooserListView:
             id: filechooser
+            path: "/home/"
 
         BoxLayout:
             size_hint_y: None
