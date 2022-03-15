@@ -1,9 +1,13 @@
 from kivy.app import App
+from kivy.base import runTouchApp
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
 from kivy.uix.button import Button
+from kivy.uix.dropdown import DropDown
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen, ScreenManager
+from kivy.uix.widget import Widget
+
 import API_Call
 
 import os
@@ -27,7 +31,7 @@ class UploadScreen(Screen):
 
     def load(self, path, filename):
         self.file = os.path.join(path, filename[0])
-        print(self.file)
+        print(self.file + " uploaded")
         self.dismiss_popup()
         res = API_Call.upload(self.file, filename)
         print(res.text, res.status_code)
@@ -36,9 +40,24 @@ class WindowManager(ScreenManager):
     pass
 
 class DownloadScreen(Screen):
-    def save(self):
-        res = API_Call.download('upload.txt')
+    def save(self, instance):
+        file_chose = instance.text
+        if(file_chose == "Sélectionner"):
+            return
+        res = API_Call.download(file_chose)
         print(res)
+    def dropBut(self, instance):
+        files = API_Call.liste_fichiers()
+        dropdown = DropDown()
+        for file in files:
+            btn = Button(text=file, size_hint_y=None, height=30)
+            btn.bind(on_release=lambda btn: dropdown.select(btn.text))
+            dropdown.add_widget(btn)
+        mainbutton = instance.ids.dropdown
+        mainbutton.bind(on_release=dropdown.open)
+        dropdown.bind(on_select=lambda instance, x: setattr(mainbutton, 'text', x))
+
+
 
 class LoadDialog(Screen):
     load = ObjectProperty(None)

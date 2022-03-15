@@ -41,11 +41,15 @@ WindowManager:
             orientation: 'horizontal'
             Button:
                 text: 'Retour'
+                bold: True
+                background_color: "#dd2700"
                 on_release:
                     app.root.current = "accueil"
                     root.manager.transition.direction = "right"
             Button:
                 text: 'Load'
+                bold: True
+                background_color: "#00c70b"
                 on_release: root.show_load()
 
 <LoadDialog>:
@@ -70,7 +74,7 @@ WindowManager:
 
 <DownloadScreen>:
     name: 'download'
-
+    on_enter: root.dropBut(self)
     BoxLayout:
         orientation: 'vertical'
         Label:
@@ -80,11 +84,21 @@ WindowManager:
             orientation: 'horizontal'
             Button:
                 text: 'Retour'
+                bold: True
+                background_color: "#dd2700"
                 on_release:
                     app.root.current = "accueil"
                     root.manager.transition.direction = "down"
-            Button:
-                text: 'Télécharger'
-                on_release:
-                    root.save()
+            BoxLayout:
+                orientation: 'vertical'
+                Button:
+                    id: dropdown
+                    text: 'Sélectionner'
+                    background_color: "#00c7a8"
+                    bold: True
+                Button:
+                    text: 'Download'
+                    bold: True
+                    background_color: "#00c70b"
+                    on_release: root.save(dropdown)
 

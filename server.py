@@ -7,7 +7,7 @@ from multiprocessing import Process
 app = Flask(__name__)
 
 #configuration des dossiers d'upload du serveur
-UPLOAD_FOLDER = './uploads'
+UPLOAD_FOLDER = './uploads/'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -72,6 +72,8 @@ def download_file(name):
 @app.route('/files_list/<dossier>')
 def list_files(dossier):
     dir = dossier.replace("!", "/")
+
+    dir = app.config["UPLOAD_FOLDER"]
     files = [ f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir,f)) ]
     resp = ','.join(files)
     return resp
