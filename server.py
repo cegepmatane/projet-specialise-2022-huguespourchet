@@ -1,0 +1,91 @@
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
+from werkzeug.utils import secure_filename
+import os, time
+import Antivirus
+from multiprocessing import Process
+
+#création d'une application Flask
+app = Flask(__name__)
+
+#configuration des dossiers d'upload du serveur
+UPLOAD_FOLDER = './uploads/'
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+#gestion de l'autorisation des types de fichiers
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
+def allowed_file(filename):
+	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+#Routes
+@app.route('/')
+def index():
+    return redirect(url_for('hello'))
+#route par défault
+@app.route('/hello/')
+def hello(error= None):
+    return render_template('hello.html', error=error)
+#route upload via page web
+@app.route('/upload/',methods = ['POST'])
+def upload_file():
+    if request.method =='POST':
+        file = request.files['file']
+        if file:
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+            return render_template('liste_file.html', files=os.listdir('./uploads'))
+    return hello(error='yes')
+#route d'upload via API
+@app.route('/upload_API/',methods = ['POST'])
+def upload_file_api():
+    if 'file' not in request.files:
+        resp = jsonify({'message': 'No file part in the request'})
+        resp.status_code = 400
+        return resp
+    file = request.files['file']
+    if file.filename == '':
+        resp = jsonify({'message': 'No file selected for uploading'})
+        resp.status_code = 400
+        return resp
+    if file and allowed_file(file.filename) and not isVirus(file):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        resp = jsonify({'message': 'File successfully uploaded'})
+        resp.status_code = 201
+
+        # #création tache multiprocess pour supprimer les fichiers après 2 minutes sur le serveur, sans altérer les requètes du serveur
+        # proc = Process(target=supprimer_folder, args=(filename))
+        # proc.start()
+        # proc.join()
+
+        return resp
+    else:
+        resp = jsonify({'message': 'Allowed file types are txt, pdf, png, jpg, jpeg, gif, mp4'})
+        resp.status_code = 400
+        return resp
+#route download, fonctionne par page web et API
+@app.route('/download/<name>')
+def download_file(name):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], name, as_attachment=True)
+
+@app.route('/files_list/<dossier>')
+def list_files(dossier):
+    dir = dossier.replace("!", "/")
+
+    dir = app.config["UPLOAD_FOLDER"]
+    files = [ f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir,f)) ]
+    resp = ','.join(files)
+    return resp
+
+def supprimer_folder(name):
+    time.sleep(2000)
+    os.remove("uploads/", name)
+    print(name, " has been removed successfully")
+
+def isVirus(file):
+    return Antivirus.hashScan_sha256(file) and Antivirus.hashScan_md5(file) and Antivirus.hashScan_sha1(file) and Antivirus.chekSignatures(file)
+
+if __name__ == '__main__':
+    app.run(port=5000)

@@ -1,0 +1,104 @@
+#:import Label kivy.uix.label.Label
+WindowManager:
+    Accueil:
+    UploadScreen:
+    LoadDialog:
+    DownloadScreen:
+
+<Accueil>:
+    name: 'accueil'
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Parachutage'
+            font_size: 30
+        BoxLayout:
+            Button:
+                text: 'UPLOAD'
+                font_size: 30
+                bold: True
+                background_color: "#e67507"
+                on_release:
+                    app.root.current = "upload"
+                    root.manager.transition.direction = "left"
+            Button:
+                text: 'DOWNLOAD'
+                font_size: 30
+                bold: True
+                background_color: "#3e45ff"
+                on_release:
+                    app.root.current = "download"
+                    root.manager.transition.direction = "up"
+
+<UploadScreen>:
+    name: "upload"
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Upload'
+            font_size: 30
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                text: 'Retour'
+                bold: True
+                background_color: "#dd2700"
+                on_release:
+                    app.root.current = "accueil"
+                    root.manager.transition.direction = "right"
+            Button:
+                text: 'Load'
+                bold: True
+                background_color: "#00c70b"
+                on_release: root.show_load()
+
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+            path: "/home/"
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Load"
+                on_release: root.load(filechooser.path, filechooser.selection)
+
+<DownloadScreen>:
+    name: 'download'
+    on_enter: root.dropBut(self)
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Download'
+            font_size: 30
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                text: 'Retour'
+                bold: True
+                background_color: "#dd2700"
+                on_release:
+                    app.root.current = "accueil"
+                    root.manager.transition.direction = "down"
+            BoxLayout:
+                orientation: 'vertical'
+                Button:
+                    id: dropdown
+                    text: 'Sélectionner'
+                    background_color: "#00c7a8"
+                    bold: True
+                Button:
+                    text: 'Download'
+                    bold: True
+                    background_color: "#00c70b"
+                    on_release: root.save(dropdown)
+
