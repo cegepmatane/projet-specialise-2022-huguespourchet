@@ -2,4 +2,5 @@ uploads
 buildozer.spec
 .buildozer
 bin
-hugues-VirtualBox
+hugues-VirtualBoxtest.py
+test.py

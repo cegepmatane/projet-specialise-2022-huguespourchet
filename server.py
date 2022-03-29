@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 import os, time
-from multiprocessing import Process
 
 #création d'une application Flask
 app = Flask(__name__)
@@ -55,13 +54,14 @@ def upload_file_api():
         resp.status_code = 201
         return resp
     else:
-        resp = jsonify({'message': 'Allowed file types are txt, pdf, png, jpg, jpeg, gif, mp4'})
+        resp = jsonify({'message': 'Allowed file types are txt, pdf, png, jpg, jpeg, gif'})
         resp.status_code = 400
         return resp
+
 #route download, fonctionne par page web et API
 @app.route('/download/<name>')
 def download_file(name):
-    return send_from_directory(app.config["UPLOAD_FOLDER"], name, as_attachment=True)
+    return send_from_directory('../uploads/', name, as_attachment=True)
 
 @app.route('/files_list/<dossier>')
 def list_files(dossier):
@@ -74,7 +74,7 @@ def list_files(dossier):
 
 def supprimer_folder(name):
     time.sleep(2000)
-    os.remove("uploads/", name)
+    os.remove("./uploads/", name)
     print(name, " has been removed successfully")
 
 if __name__ == '__main__':

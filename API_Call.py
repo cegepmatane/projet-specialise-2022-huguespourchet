@@ -28,10 +28,11 @@ def upload(path, filename):
 def download(filename):
     req = requests.get('https://huguespourchet.pythonanywhere.com/download/'+filename, allow_redirects=True)
     print('download: ')
-    print(req.text)
-    user = os.getlogin()
-    url = '/home/'+user+'/Téléchargements/' + filename
-    fichier = open(url, "w")
-    fichier.write(req.text)
-    fichier.close()
+    print(req.content)
+    if req.status_code == 200:
+        user = os.getlogin()
+        url = '/home/' + user + '/Téléchargements/' + filename
+        fichier = open(url, "w")
+        fichier.write(req.text)
+        fichier.close()
     return req
