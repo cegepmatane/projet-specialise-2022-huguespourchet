@@ -71,7 +71,7 @@ def download_file(name):
 
 @app.route('/files_list/<dossier>')
 def list_files(dossier):
-    dir = dossier.replace("!", "/")
+    # dir = dossier.replace("!", "/")
 
     dir = app.config["UPLOAD_FOLDER"]
     files = [ f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir,f)) ]
@@ -84,4 +84,5 @@ def supprimer_folder(name):
     print(name, " has been removed successfully")
 
 if __name__ == '__main__':
+    app.config['FLASK_ENV'] = 'production'
     app.run(port=5000)
