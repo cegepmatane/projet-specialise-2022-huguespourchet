@@ -53,12 +53,6 @@ def upload_file_api():
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         resp = jsonify({'message': 'File successfully uploaded'})
         resp.status_code = 201
-
-        # #création tache multiprocess pour supprimer les fichiers après 2 minutes sur le serveur, sans altérer les requètes du serveur
-        # proc = Process(target=supprimer_folder, args=(filename))
-        # proc.start()
-        # proc.join()
-
         return resp
     else:
         resp = jsonify({'message': 'Allowed file types are txt, pdf, png, jpg, jpeg, gif, mp4'})
